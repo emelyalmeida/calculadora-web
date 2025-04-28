@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora | Emely</title>
+    <meta name="author" content="Emely">
+    <style>
+        /* Estilos Emely */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #fdf2f8; /* rosa bem claro */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .calculator-container {
+            width: 100%;
+            max-width: 350px;
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(219, 39, 119, 0.1);
+        }
+
+        .calculator-header {
+            background: linear-gradient(to right, #db2777, #be185d);
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .calculator-header h1 {
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        .calculator-header p {
+            font-size: 0.8rem;
+            opacity: 0.8;
+            margin-top: 5px;
+        }
+
+        .display {
+            background-color: #fdf2f8;
+            padding: 20px;
+            text-align: right;
+            border-bottom: 1px solid #fbcfe8;
+        }
+
+        .display-previous {
+            font-size: 1rem;
+            color: #9d174d;
+            opacity: 0.7;
+            height: 24px;
+            overflow: hidden;
+        }
+
+        .display-current {
+            font-size: 2.5rem;
+            color: #be185d;
+            font-weight: bold;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .buttons {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1px;
+            background-color: #fbcfe8;
+        }
+
+        .btn {
+            border: none;
+            background-color: white;
+            padding: 20px;
+            font-size: 1.25rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn:hover {
+            background-color: #fdf2f8;
+        }
+
+        .btn:active {
+            background-color: #fbcfe8;
+        }
+
+        .btn-operator {
+            color: #db2777;
+            font-weight: bold;
+        }
+
+        .btn-equal {
+            background-color: #db2777;
+            color: white;
+            grid-column: span 2;
+        }
+
+        .btn-equal:hover {
+            background-color: #be185d;
+        }
+
+        .btn-clear {
+            color: #e11d48;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 15px;
+            background-color: white;
+            color: #9d174d;
+            font-size: 0.8rem;
+            border-top: 1px solid #fbcfe8;
+        }
+
+        /* Responsividade */
+        @media (max-width: 400px) {
+            .calculator-container {
+                width: 95%;
+                margin: 0 auto;
+            }
+            
+            .btn {
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="calculator-container">
+        <div class="calculator-header">
+            <h1>Calculadora</h1>
+            <p>Desenvolvido por Emely</p>
+        </div>
+        
+        <div class="display">
+            <div class="display-previous" id="previous-display"></div>
+            <div class="display-current" id="current-display">0</div>
+        </div>
+        
+        <div class="buttons">
+            <!-- Primeira linha -->
+            <button class="btn btn-clear" onclick="clearAll()">C</button>
+            <button class="btn" onclick="deleteLastChar()">⌫</button>
+            <button class="btn btn-operator" onclick="appendOperator('%')">%</button>
+            <button class="btn btn-operator" onclick="appendOperator('÷')">÷</button>
+            
+            <!-- Segunda linha -->
+            <button class="btn" onclick="appendNumber('7')">7</button>
+            <button class="btn" onclick="appendNumber('8')">8</button>
+            <button class="btn" onclick="appendNumber('9')">9</button>
+            <button class="btn btn-operator" onclick="appendOperator('×')">×</button>
+            
+            <!-- Terceira linha -->
+            <button class="btn" onclick="appendNumber('4')">4</button>
+            <button class="btn" onclick="appendNumber('5')">5</button>
+            <button class="btn" onclick="appendNumber('6')">6</button>
+            <button class="btn btn-operator" onclick="appendOperator('-')">-</button>
+            
+            <!-- Quarta linha -->
+            <button class="btn" onclick="appendNumber('1')">1</button>
+            <button class="btn" onclick="appendNumber('2')">2</button>
+            <button class="btn" onclick="appendNumber('3')">3</button>
+            <button class="btn btn-operator" onclick="appendOperator('+')">+</button>
+            
+            <!-- Quinta linha -->
+            <button class="btn" onclick="appendNumber('0')">0</button>
+            <button class="btn" onclick="appendDecimal()">.</button>
+            <button class="btn btn-equal" onclick="calculate()">=</button>
+        </div>
+        
+        <div class="footer">
+            &copy; 2024 Emely - Todos os direitos reservados
+        </div>
+    </div>
+
+    <script>
+        // Calculadora desenvolvida por Emely
+        let currentDisplay = document.getElementById('current-display');
+        let previousDisplay = document.getElementById('previous-display');
+        
+        let currentNumber = '0';
+        let previousNumber = '';
+        let operation = null;
+        let shouldResetScreen = false;
+        
+        function updateDisplay() {
+            currentDisplay.textContent = currentNumber;
+            
+            if (operation) {
+                previousDisplay.textContent = `${previousNumber} ${operation}`;
+            } else {
+                previousDisplay.textContent = '';
+            }
+        }
+        
+        function appendNumber(number) {
+            if (currentNumber === '0' || shouldResetScreen) {
+                currentNumber = number;
+                shouldResetScreen = false;
+            } else {
+                // Limitar o número de dígitos para evitar overflow
+                if (currentNumber.length < 12) {
+                    currentNumber += number;
+                }
+            }
+            updateDisplay();
+        }
+        
+        function appendDecimal() {
+            if (shouldResetScreen) {
+                currentNumber = '0.';
+                shouldResetScreen = false;
+            } else if (!currentNumber.includes('.')) {
+                currentNumber += '.';
+            }
+            updateDisplay();
+        }
+        
+        function appendOperator(op) {
+            if (operation && !shouldResetScreen) {
+                calculate();
+            }
+            
+            previousNumber = currentNumber;
+            operation = op;
+            shouldResetScreen = true;
+            updateDisplay();
+        }
+        
+        function calculate() {
+            if (!operation || shouldResetScreen) return;
+            
+            let result;
+            const prev = parseFloat(previousNumber);
+            const current = parseFloat(currentNumber);
+            
+            if (isNaN(prev) || isNaN(current)) return;
+            
+            switch (operation) {
+                case '+':
+                    result = prev + current;
+                    break;
+                case '-':
+                    result = prev - current;
+                    break;
+                case '×':
+                    result = prev * current;
+                    break;
+                case '÷':
+                    if (current === 0) {
+                        alert('Erro: Divisão por zero!');
+                        clearAll();
+                        return;
+                    }
+                    result = prev / current;
+                    break;
+                case '%':
+                    result = prev * (current / 100);
+                    break;
+                default:
+                    return;
+            }
+            
+            // Formatar o resultado para evitar números muito longos
+            if (result.toString().length > 12) {
+                result = result.toExponential(6);
+            }
+            
+            currentNumber = result.toString();
+            operation = null;
+            previousNumber = '';
+            shouldResetScreen = true;
+            updateDisplay();
+        }
+        
+        function clearAll() {
+            currentNumber = '0';
+            previousNumber = '';
+            operation = null;
+            shouldResetScreen = false;
+            updateDisplay();
+        }
+        
+        function deleteLastChar() {
+            if (currentNumber.length === 1 || (currentNumber.length === 2 && currentNumber.startsWith('-'))) {
+                currentNumber = '0';
+            } else {
+                currentNumber = currentNumber.slice(0, -1);
+            }
+            updateDisplay();
+        }
+        
+        // Suporte a teclado - Emely
+        document.addEventListener('keydown', function(event) {
+            if (event.key >= '0' && event.key <= '9') {
+                appendNumber(event.key);
+            } else if (event.key === '.') {
+                appendDecimal();
+            } else if (event.key === '+') {
+                appendOperator('+');
+            } else if (event.key === '-') {
+                appendOperator('-');
+            } else if (event.key === '*') {
+                appendOperator('×');
+            } else if (event.key === '/') {
+                event.preventDefault();
+                appendOperator('÷');
+            } else if (event.key === '%') {
+                appendOperator('%');
+            } else if (event.key === 'Enter' || event.key === '=') {
+                calculate();
+            } else if (event.key === 'Escape') {
+                clearAll();
+            } else if (event.key === 'Backspace') {
+                deleteLastChar();
+            }
+        });
+        
+        // Inicialização
+        updateDisplay();
+    </script>
+</body>
+</html>
