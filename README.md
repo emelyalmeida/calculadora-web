@@ -1,34 +1,23 @@
-# Calculadora Web 💗
+# Calculadora Web
 
-Uma calculadora feita com HTML, CSS e JavaScript, com interface em tons de rosa e suporte a operações matemáticas básicas. Projeto criado para praticar lógica e interação com elementos da página.
+Uma calculadora simples feita com HTML, CSS e JavaScript. Fiz a interface em tons de rosa e implementei as operações básicas, incluindo porcentagem e entrada pelo teclado.
 
-## ✨ Funcionalidades
-
+## Funcionalidades
 - Adição, subtração, multiplicação e divisão
-- Cálculo de porcentagem
-- Limpar a operação e apagar o último caractere
-- Entrada de números decimais
+- Porcentagem
+- Apagar o último caractere ou limpar a conta
+- Números decimais
 - Atalhos pelo teclado
-- Tratamento de divisão por zero
+- Aviso para divisão por zero
 - Layout adaptável para telas menores
 
-## 🛠️ Tecnologias
+## Tecnologias
+HTML, CSS e JavaScript.
 
-- HTML5
-- CSS3
-- JavaScript
+## Como executar
+Clone o repositório e abra o arquivo `calcul.html` no navegador. Não precisa instalar dependências.
 
-## ▶️ Como executar
+## O que pratiquei
+Manipulação do DOM, eventos, funções e lógica das operações matemáticas.
 
-1. Clone este repositório.
-2. Abra o arquivo `calcul.html` no navegador.
-
-Não é necessário instalar dependências.
-
-## 📚 O que pratiquei
-
-Manipulação do DOM, eventos de clique e teclado, funções JavaScript, lógica de operações e construção de uma interface responsiva.
-
----
-
-Feito por [Emely Almeida](https://github.com/emelyalmeida) 🌷
+Desenvolvido por [Emely Almeida](https://github.com/emelyalmeida).
